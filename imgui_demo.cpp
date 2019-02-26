@@ -1095,12 +1095,15 @@ static void ShowDemoWindowWidgets()
         ImGui::Checkbox("With HDR", &hdr); ImGui::SameLine(); ShowHelpMarker("Currently all this does is to lift the 0..1 limits on dragging widgets.");
         int misc_flags = (hdr ? ImGuiColorEditFlags_HDR : 0) | (drag_and_drop ? 0 : ImGuiColorEditFlags_NoDragDrop) | (alpha_half_preview ? ImGuiColorEditFlags_AlphaPreviewHalf : (alpha_preview ? ImGuiColorEditFlags_AlphaPreview : 0)) | (options_menu ? 0 : ImGuiColorEditFlags_NoOptions);
 
+        ImGui::Text("RGB values:");
+        ImGui::DragFloat4("MyColor##0", (float*)&color.x, 0.01f, 0.0f, 1.0f);
+
         ImGui::Text("Color widget:");
         ImGui::SameLine(); ShowHelpMarker("Click on the colored square to open a color picker.\nCTRL+click on individual component to input value.\n");
         ImGui::ColorEdit3("MyColor##1", (float*)&color, misc_flags);
 
         ImGui::Text("Color widget HSV with Alpha:");
-        ImGui::ColorEdit4("MyColor##2", (float*)&color, ImGuiColorEditFlags_HSV | misc_flags);
+        ImGui::ColorEdit4("MyColor##2", (float*)&color, ImGuiColorEditFlags_ShowHSV | misc_flags);
 
         ImGui::Text("Color widget with Float Display:");
         ImGui::ColorEdit4("MyColor##2f", (float*)&color, ImGuiColorEditFlags_Float | misc_flags);
@@ -1182,7 +1185,7 @@ static void ShowDemoWindowWidgets()
         static bool side_preview = true;
         static bool ref_color = false;
         static ImVec4 ref_color_v(1.0f,0.0f,1.0f,0.5f);
-        static int inputs_mode = 2;
+        static int show_mode = 2;
         static int picker_mode = 0;
         ImGui::Checkbox("With Alpha", &alpha);
         ImGui::Checkbox("With Alpha Bar", &alpha_bar);
@@ -1197,7 +1200,7 @@ static void ShowDemoWindowWidgets()
                 ImGui::ColorEdit4("##RefColor", &ref_color_v.x, ImGuiColorEditFlags_NoInputs | misc_flags);
             }
         }
-        ImGui::Combo("Inputs Mode", &inputs_mode, "All Inputs\0No Inputs\0RGB Input\0HSV Input\0HEX Input\0");
+        ImGui::Combo("Show Mode", &show_mode, "All\0None\0Show RGB\0Show HSV\0Show HEX\0");
         ImGui::Combo("Picker Mode", &picker_mode, "Auto/Current\0Hue bar + SV rect\0Hue wheel + SV triangle\0");
         ImGui::SameLine(); ShowHelpMarker("User can right-click the picker to change mode.");
         ImGuiColorEditFlags flags = misc_flags;
@@ -1206,18 +1209,28 @@ static void ShowDemoWindowWidgets()
         if (!side_preview) flags |= ImGuiColorEditFlags_NoSidePreview;
         if (picker_mode == 1) flags |= ImGuiColorEditFlags_PickerHueBar;
         if (picker_mode == 2) flags |= ImGuiColorEditFlags_PickerHueWheel;
-        if (inputs_mode == 1) flags |= ImGuiColorEditFlags_NoInputs;
-        if (inputs_mode == 2) flags |= ImGuiColorEditFlags_RGB;
-        if (inputs_mode == 3) flags |= ImGuiColorEditFlags_HSV;
-        if (inputs_mode == 4) flags |= ImGuiColorEditFlags_HEX;
+        if (show_mode == 1) flags |= ImGuiColorEditFlags_NoInputs;
+        if (show_mode == 2) flags |= ImGuiColorEditFlags_ShowRGB;
+        if (show_mode == 3) flags |= ImGuiColorEditFlags_ShowHSV;
+        if (show_mode == 4) flags |= ImGuiColorEditFlags_ShowHEX;
         ImGui::ColorPicker4("MyColor##4", (float*)&color, flags, ref_color ? &ref_color_v.x : NULL);
 
         ImGui::Text("Programmatically set defaults:");
         ImGui::SameLine(); ShowHelpMarker("SetColorEditOptions() is designed to allow you to set boot-time default.\nWe don't have Push/Pop functions because you can force options on a per-widget basis if needed, and the user can change non-forced ones with the options menu.\nWe don't have a getter to avoid encouraging you to persistently save values that aren't forward-compatible.");
         if (ImGui::Button("Default: Uint8 + HSV + Hue Bar"))
-            ImGui::SetColorEditOptions(ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_HSV | ImGuiColorEditFlags_PickerHueBar);
+            ImGui::SetColorEditOptions(ImGuiColorEditFlags_Uint8 | ImGuiColorEditFlags_ShowHSV | ImGuiColorEditFlags_PickerHueBar);
         if (ImGui::Button("Default: Float + HDR + Hue Wheel"))
             ImGui::SetColorEditOptions(ImGuiColorEditFlags_Float | ImGuiColorEditFlags_HDR | ImGuiColorEditFlags_PickerHueWheel);
+
+        ImGui::Spacing();
+        ImGui::Text("HSV-formatted colors");
+        ImGui::SameLine(); ShowHelpMarker("By default, colors are given to ColorEdit and ColorPicker in RGB, but ImGuiColorEditFlags_InputHSV allows you to store colors as HSV and pass them to ColorEdit and ColorPicker as HSV. This comes with the added benefit that you can manipulate hue values with the picker even when saturation or value are zero.");
+
+        static ImVec4 color_stored_as_hsv(0.23f, 1.0f, 1.0f, 1.0f);
+        ImGui::Text("HSV values:");
+        ImGui::DragFloat4("HSVColor##0", (float*)&color_stored_as_hsv, 0.01f, 0.0f, 1.0f);
+        ImGui::Text("Color widget with InputHSV:");
+        ImGui::ColorEdit4("HSVColor##1", (float*)&color_stored_as_hsv, ImGuiColorEditFlags_ShowRGB | ImGuiColorEditFlags_InputHSV);
 
         ImGui::TreePop();
     }
