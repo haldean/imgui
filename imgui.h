@@ -1117,6 +1117,9 @@ enum ImGuiColorEditFlags_
     ImGuiColorEditFlags_Float           = 1 << 24,  // [DataType]   // ColorEdit, ColorPicker, ColorButton: _display_ values formatted as 0.0f..1.0f floats instead of 0..255 integers. No round-trip of value via integers.
     ImGuiColorEditFlags_PickerHueBar    = 1 << 25,  // [PickerMode] // ColorPicker: bar for Hue, rectangle for Sat/Value.
     ImGuiColorEditFlags_PickerHueWheel  = 1 << 26,  // [PickerMode] // ColorPicker: wheel for Hue, triangle for Sat/Value.
+    ImGuiColorEditFlags_InputRGB        = 1 << 27,  // [Input]      // ColorEdit, ColorPicker: input and output data is in RGB format
+    ImGuiColorEditFlags_InputHSV        = 1 << 28,  // [Input]      // ColorEdit, ColorPicker: input and output data is in HSV format
+
     // Obsolete names (will be removed)
 #ifndef IMGUI_DISABLE_OBSOLETE_FUNCTIONS
     ImGuiColorEditFlags_RGB = ImGuiColorEditFlags_ShowRGB, ImGuiColorEditFlags_HSV = ImGuiColorEditFlags_ShowHSV, ImGuiColorEditFlags_HEX = ImGuiColorEditFlags_ShowHEX,
@@ -1124,9 +1127,10 @@ enum ImGuiColorEditFlags_
 
     // [Internal] Masks
     ImGuiColorEditFlags__ShowMask       = ImGuiColorEditFlags_ShowRGB|ImGuiColorEditFlags_ShowHSV|ImGuiColorEditFlags_ShowHEX,
+    ImGuiColorEditFlags__InputMask      = ImGuiColorEditFlags_InputRGB|ImGuiColorEditFlags_InputHSV,
     ImGuiColorEditFlags__DataTypeMask   = ImGuiColorEditFlags_Uint8|ImGuiColorEditFlags_Float,
     ImGuiColorEditFlags__PickerMask     = ImGuiColorEditFlags_PickerHueWheel|ImGuiColorEditFlags_PickerHueBar,
-    ImGuiColorEditFlags__OptionsDefault = ImGuiColorEditFlags_Uint8|ImGuiColorEditFlags_ShowRGB|ImGuiColorEditFlags_PickerHueBar    // Change application default using SetColorEditOptions()
+    ImGuiColorEditFlags__OptionsDefault = ImGuiColorEditFlags_Uint8|ImGuiColorEditFlags_ShowRGB|ImGuiColorEditFlags_PickerHueBar|ImGuiColorEditFlags_InputRGB    // Change application default using SetColorEditOptions()
 };
 
 // Enumeration for GetMouseCursor()
